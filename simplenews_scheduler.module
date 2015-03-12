@@ -81,10 +81,19 @@ function simplenews_scheduler_form_simplenews_node_tab_send_form_alter(&$form, &
 
       $form_state['simplenews_scheduler'] = $scheduler;
 
-      $form['simplenews']['send']['#options'] += array(
-        SIMPLENEWS_COMMAND_SEND_SCHEDULE => t('Send newsletter according to schedule'),
-        SIMPLENEWS_COMMAND_SEND_NONE => t("Stop newsletter schedule"),
-      );
+      // Only show relevant options
+      if ($scheduler['activated'] == 0) {
+        $form['simplenews']['send']['#options'] += array(
+          SIMPLENEWS_COMMAND_SEND_SCHEDULE => t('Send newsletter according to schedule'),
+        );
+      }
+      else {
+        $form['simplenews']['send']['#options'] += array(
+          SIMPLENEWS_COMMAND_SEND_NONE => t("Stop newsletter schedule"),
+        );
+		drupal_set_message(t('Newsletter Schedule will send again on @next_run', array('@next_run' => format_date($record['next_run']))));
+      }
+
       $form['simplenews']['send']['#default_value'] = ($scheduler['activated'] == 1) ? SIMPLENEWS_COMMAND_SEND_SCHEDULE : variable_get('simplenews_send', SIMPLENEWS_COMMAND_SEND_NONE);
 
       $form['simplenews']['scheduler'] = array(
@@ -247,9 +256,12 @@ function simplenews_scheduler_submit($form, &$form_state) {
     'title'              => $form_state['values']['simplenews']['scheduler']['title'],
   );
 
-  // For a new scheduler, add the next_run time.
-  if (!isset($scheduler['next_run'])) {
+  // For a new scheduler, add the next_run time
+  // and also for the old deactivated.
+  if (!isset($scheduler['next_run']) || (isset($scheduler['activated']) && $scheduler['activated'] == 0)) {
     $record['next_run'] = $start_date;
+	// reset last run, so next run will be calculated properly
+    $record['last_run'] = 0;
   }
 
   // Update scheduler record.
