@@ -34,7 +34,8 @@ TESTED
 -----
 
 @todo
-This module has NOT BEEN TESTED and is being ported to Backdrop.  It may work.
+
+This module is not working in Backdrop yet.  Node and Taxonomy conversions need to be made (among possible other things) before it can be tested.
 
 KNOWN ISSUES
 ---------------------
