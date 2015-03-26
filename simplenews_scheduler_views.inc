@@ -37,7 +37,7 @@ function simplenews_scheduler_handler_newsletters() {
   }
   
   if(sizeof($list) ==0) {
-    drupal_set_message('No current newsletter found to filter against, you should create a simplenews newsletter first.'); 
+    backdrop_set_message('No current newsletter found to filter against, you should create a simplenews newsletter first.'); 
   }
   
   

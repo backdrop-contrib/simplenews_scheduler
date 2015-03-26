@@ -91,10 +91,10 @@ function simplenews_scheduler_form_simplenews_node_tab_send_form_alter(&$form, &
         $form['simplenews']['send']['#options'] += array(
           SIMPLENEWS_COMMAND_SEND_NONE => t("Stop newsletter schedule"),
         );
-		drupal_set_message(t('Newsletter Schedule will send again on @next_run', array('@next_run' => format_date($record['next_run']))));
+		backdrop_set_message(t('Newsletter Schedule will send again on @next_run', array('@next_run' => format_date($record['next_run']))));
       }
 
-      $form['simplenews']['send']['#default_value'] = ($scheduler['activated'] == 1) ? SIMPLENEWS_COMMAND_SEND_SCHEDULE : variable_get('simplenews_send', SIMPLENEWS_COMMAND_SEND_NONE);
+      $form['simplenews']['send']['#default_value'] = ($scheduler['activated'] == 1) ? SIMPLENEWS_COMMAND_SEND_SCHEDULE : config_get('simplenews_send');
 
       $form['simplenews']['scheduler'] = array(
         '#type' => 'fieldset',
@@ -272,7 +272,7 @@ function simplenews_scheduler_submit($form, &$form_state) {
     ->fields($record)
     ->execute();
 
-  drupal_set_message(t('Newsletter Schedule preferences have been saved.'));
+  backdrop_set_message(t('Newsletter Schedule preferences have been saved.'));
 }
 
 /**
@@ -322,7 +322,7 @@ function simplenews_scheduler_node_delete($node) {
  */
 function simplenews_scheduler_node_view($node) {
   if (isset($node->simplenews_scheduler_edition) && user_access('send scheduled newsletters')) {
-    drupal_set_message(t('This is a newsletter edition. View the the master template of this newsletter <a href="!master_url">here</a>', array('!master_url' => url('node/' . $node->simplenews_edition_parent))));
+    backdrop_set_message(t('This is a newsletter edition. View the the master template of this newsletter <a href="!master_url">here</a>', array('!master_url' => url('node/' . $node->simplenews_edition_parent))));
   }
 }
 
@@ -368,7 +368,7 @@ function simplenews_scheduler_scheduler_update($newsletter_parent_data, $now_tim
   // Set the run time for the next edition.
   $newsletter_parent_data->next_run = simplenews_scheduler_calculate_next_run_time($newsletter_parent_data, $now_time);
 
-  drupal_write_record('simplenews_scheduler', $newsletter_parent_data, 'nid');
+  backdrop_write_record('simplenews_scheduler', $newsletter_parent_data, 'nid');
 }
 
 /**
@@ -590,7 +590,7 @@ function simplenews_scheduler_clone_node($node) {
  * is ported from D6!
  */
 function simplenews_scheduler_node_page($node) {
-  drupal_set_title(t('Scheduled newsletter editions'));
+  backdrop_set_title(t('Scheduled newsletter editions'));
   $nid = _simplenews_scheduler_get_pid($node);
   $output = '';
   $rows = array();
@@ -643,7 +643,7 @@ function _simplenews_scheduler_tab_permission($node) {
 /**
  * Find Full HTML input format.
  *
- * Use the Drupal API for finding the Full HTML input format, this is what the subsequent newsletter editions
+ * Use the Backdrop API for finding the Full HTML input format, this is what the subsequent newsletter editions
  * need to be set to.
  */
 function _simplenews_scheduler_get_full_html_format() {
@@ -692,7 +692,7 @@ function _simplenews_scheduler_new_edition($nid, $edition_time) {
 
   // Invoke simplenews_scheduler_edition_node() to give installed modules a
   // chance to modify the cloned edition node if necessary before it gets saved.
-  drupal_alter('simplenews_scheduler_edition_node', $edition_node, $template_node);
+  backdrop_alter('simplenews_scheduler_edition_node', $edition_node, $template_node);
 
   // Save the changes of other modules
   node_save($edition_node);

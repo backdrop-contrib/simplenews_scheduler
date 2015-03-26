@@ -1,6 +1,7 @@
 name = "Simplenews Scheduler"
 description = "Allows a schedule to be set for sending (and resending) a Simplenews item."
-core = 7.x
+version = BACKDROP_VERSION
+backdrop = 1.x
 package = Mail
 php = 5.3
 files[] = tests/simplenews_scheduler.test

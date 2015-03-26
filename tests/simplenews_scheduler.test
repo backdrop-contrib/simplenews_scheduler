@@ -10,14 +10,14 @@
  *
  * Declares the module dependencies for the test.
  *
- * We need to use DrupalWebTestCase as our base class even for functional
- * testing, as the functions that we test rely on variable_get() which requires
+ * We need to use BackdropWebTestCase as our base class even for functional
+ * testing, as the functions that we test rely on config_get() which requires
  * a bootstrapped database.
  */
-class SimpleNewsSchedulerWebTestCase extends DrupalWebTestCase {
+class SimpleNewsSchedulerWebTestCase extends BackdropWebTestCase {
 
   /**
-   * Overrides DrupalWebTestCase::setUp().
+   * Overrides BackdropWebTestCase::setUp().
    *
    * @param $modules
    *   Additional modules to enable for the test. simplenews_scheduler and
@@ -30,8 +30,8 @@ class SimpleNewsSchedulerWebTestCase extends DrupalWebTestCase {
 
     // Set the site timezone to something visibly different from UTC, which
     // has daylight saving changes.
-    variable_set('date_default_timezone', 'Europe/Kiev');
-    date_default_timezone_set(drupal_get_user_timezone());
+    config_set('system.date', 'date_default_timezone', 'Europe/Kiev');
+    date_default_timezone_set(backdrop_get_user_timezone());
   }
 }
 
@@ -58,7 +58,7 @@ class SimpleNewsSchedulerNodeCreationTest extends SimpleNewsSchedulerWebTestCase
   function setUp() {
     parent::setUp();
 
-    $this->privileged_user = $this->drupalCreateUser(array(
+    $this->privileged_user = $this->backdropCreateUser(array(
       'access content',
       'administer nodes',
       'create simplenews content',
@@ -67,7 +67,7 @@ class SimpleNewsSchedulerNodeCreationTest extends SimpleNewsSchedulerWebTestCase
       'send scheduled newsletters',
       'overview scheduled newsletters',
       ));
-    $this->drupalLogin($this->privileged_user);
+    $this->backdropLogin($this->privileged_user);
 
     // Subscribe a user to simplenews.
     $categories = simplenews_categories_load_multiple();
@@ -86,7 +86,7 @@ class SimpleNewsSchedulerNodeCreationTest extends SimpleNewsSchedulerWebTestCase
     $edit = array();
     $edit['title'] = $title;
     $edit["body[und][0][value]"] = $this->randomName(16);
-    $this->drupalPost('node/add/simplenews', $edit, t('Save'));
+    $this->backdropPost('node/add/simplenews', $edit, t('Save'));
     $this->assertText($title);
 
     preg_match('|node/(\d+)$|', $this->getUrl(), $matches);
@@ -94,11 +94,11 @@ class SimpleNewsSchedulerNodeCreationTest extends SimpleNewsSchedulerWebTestCase
 
     // Make sure that the editions tab is not visible as long as it's not a
     // scheduled newsletter.
-    $this->drupalGet("node/{$node->nid}/editions");
+    $this->backdropGet("node/{$node->nid}/editions");
     $this->assertResponse(403, t('Editions tab not accessible'));
 
     // Now create the simplenews schedule configuration.
-    $this->drupalGet("node/{$node->nid}/simplenews");
+    $this->backdropGet("node/{$node->nid}/simplenews");
     $this->assertText(t("Send newsletter according to schedule"));
 
     $edit = array();
@@ -116,18 +116,18 @@ class SimpleNewsSchedulerNodeCreationTest extends SimpleNewsSchedulerWebTestCase
     $edit["simplenews[scheduler][start_date][minute]"]  = $date->format('i');
     $edit["simplenews[scheduler][title]"]  = "Custom title [site:name]";
 
-    $this->drupalPost("node/{$node->nid}/simplenews", $edit, t('Submit'));
+    $this->backdropPost("node/{$node->nid}/simplenews", $edit, t('Submit'));
 
 
     // Make sure it knows no editions created yet.
-    $this->drupalGet("node/{$node->nid}/editions");
+    $this->backdropGet("node/{$node->nid}/editions");
     $this->assertText(t("No scheduled newsletter editions have been sent."));
 
     // Execute cron.
-    drupal_cron_run();
+    backdrop_cron_run();
 
     // See if it was created.
-    $this->drupalGet("node/{$node->nid}/editions");
+    $this->backdropGet("node/{$node->nid}/editions");
     $this->assertText("Custom title");
     $this->assertNoText(t("No scheduled newsletter editions have been sent."));
 
@@ -135,13 +135,13 @@ class SimpleNewsSchedulerNodeCreationTest extends SimpleNewsSchedulerWebTestCase
 
     // Go to node and verify creation time and token for custom title
     // @todo: make this real token integration
-    $this->clickLink("Custom title ". variable_get('site_name', 'Drupal'));
+    $this->clickLink("Custom title ". config_get('system.core', 'site_name'));
 
     $this->assertText(t('This is a newsletter edititon. View the the master template of this newsletter here'));
     $this->assertText(t('Submitted by @name on @date', array('@name' => format_username($this->privileged_user), '@date' => format_date($date->getTimestamp()))));
 
     // Check sent mails.
-    $mails = $this->drupalGetMails();
+    $mails = $this->backdropGetMails();
     $this->assertEqual(1, count($mails), t('Newsletter mail has been sent.'));
 
     $this->clickLink(t('Newsletter'));
@@ -155,7 +155,7 @@ class SimpleNewsSchedulerNodeCreationTest extends SimpleNewsSchedulerWebTestCase
     $edit = array();
     $edit['title'] = $title;
     $edit["body[und][0][value]"] = $this->randomName(16);
-    $this->drupalPost('node/add/simplenews', $edit, t('Save'));
+    $this->backdropPost('node/add/simplenews', $edit, t('Save'));
     $this->assertText($title);
 
     preg_match('|node/(\d+)$|', $this->getUrl(), $matches);
@@ -163,11 +163,11 @@ class SimpleNewsSchedulerNodeCreationTest extends SimpleNewsSchedulerWebTestCase
 
     $edit = array();
     $edit["simplenews[send]"] = SIMPLENEWS_COMMAND_SEND_NOW;
-    $this->drupalPost("node/{$node->nid}/simplenews", $edit, t('Submit'));
+    $this->backdropPost("node/{$node->nid}/simplenews", $edit, t('Submit'));
     $this->assertNoText(t('Schedule details'));
 
     // Check sent mails.
-    $mails = $this->drupalGetMails();
+    $mails = $this->backdropGetMails();
     $this->assertEqual(1, count($mails), t('Newsletter mail has been sent.'));
   }
 }
@@ -470,7 +470,7 @@ class SimpleNewsSchedulerEditionDueTest extends SimpleNewsSchedulerWebTestCase {
   function setUp() {
     parent::setUp();
 
-    $this->privileged_user = $this->drupalCreateUser(array(
+    $this->privileged_user = $this->backdropCreateUser(array(
       'access content',
       'administer nodes',
       'create simplenews content',
@@ -479,7 +479,7 @@ class SimpleNewsSchedulerEditionDueTest extends SimpleNewsSchedulerWebTestCase {
       'send scheduled newsletters',
       'overview scheduled newsletters',
       ));
-    $this->drupalLogin($this->privileged_user);
+    $this->backdropLogin($this->privileged_user);
 
     // The start date of the edition. This is on 5 January so that we get some
     // days in either month, and at at noon to keep things simple.
@@ -537,7 +537,7 @@ class SimpleNewsSchedulerEditionDueTest extends SimpleNewsSchedulerWebTestCase {
     $parent_nid = $this->parent_nid ;
 
     // But just check it exists for sanity.
-    $this->drupalGet("node/$parent_nid");
+    $this->backdropGet("node/$parent_nid");
 
     // Simulate cron running daily at half past 12 so that an edition due at
     // 12 noon should be picked up.
@@ -616,7 +616,7 @@ class SimpleNewsSchedulerEditionDueTest extends SimpleNewsSchedulerWebTestCase {
 
 
           // Check the node exists.
-          $this->drupalGet("node/$eid");
+          $this->backdropGet("node/$eid");
         } // handling the request for a new edition
       } // foreach offset timestamp
 
