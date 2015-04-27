@@ -13,6 +13,17 @@ define('SIMPLENEWS_COMMAND_SEND_SCHEDULE', 4);
 define('SIMPLENEWS_COMMAND_SEND_NONE', 5);
 
 /**
+ * Implements hook_config_info().
+ */
+function simplenews_scheduler_config_info() {
+  $prefixes['simplenews_scheduler.settings'] = array(
+    'label' => t('simplenews_scheduler settings'),
+    'group' => t('simplenews_scheduler'),
+  );
+  return $prefixes;
+} 
+
+/**
  * Implements hook_permission().
  */
 function simplenews_scheduler_permission() {

@@ -1,15 +1,20 @@
 SIMPLENEWS SCHEDULER
-===========
+===================
 
 CONTENTS OF THIS FILE
 ---------------------
 
  - Introduction
+ - Tested
+ - Known Issues
+ - Special Thanks
  - Requirements
  - Installation
- - Permissions
+ - Coming From Drupal?
  - Usage
- - Sponsors
+ - License
+ - Credits
+ - Maintainers
 
 INTRODUCTION
 ------------
@@ -33,13 +38,34 @@ http://drupal.org/project/issues/simplenews_scheduler
 TESTED
 -----
 
-@todo
-This module has NOT BEEN TESTED and is being ported to Backdrop.  It may work.
+Email Modules
+The following modules ported to Backdrop are inter-related to the mailing system:
+
+simplenews
+
+simplenews_scheduler
+
+mimemail
+
+mandrill
+
+mailsystem
+
+smtp
+
+They have been converted from Drupal to Backdrop but are still not working.  They need debugging into what was changed between the systems and how to fix it. I, biolithic the one who did the intial conversion, lack the heart or time in the spring of 2015 to debug them currently.
+
+Do you have a need or desire for email newsletters?  You are welcome to submit pull requests to finish these modules.  It may not be a lot of work.  Thanks!
 
 KNOWN ISSUES
 ---------------------
+
 @todo
 
+SPECIAL THANKS
+--------------
+
+the creators of the Simplenews module
 
 REQUIREMENTS
 ------------
@@ -54,10 +80,14 @@ REQUIREMENTS
 INSTALLATION
 ------------
 
-Simplenews Scheduler can be installed via the standard Backdrop installation process
-(http://drupal.org/documentation/install/modules-themes/modules-7).
+Install this module using the official Backdrop CMS instructions at https://backdropcms.org/guide/modules
 
 * Install as usual, see http://drupal.org/node/70151 for further information.
+
+COMING FROM DRUPAL?
+-------------------
+
+Nothing substantially different.
 
 PERMISSIONS
 ------------
@@ -67,26 +97,27 @@ PERMISSIONS
 
 USAGE
 -----
-@todo
 
 Locate the module options under "Send newsletter" on the node edit page. When you select
 "Send newsletter according to schedule" a new section titled "Schedule details" appear.
 
-License
+LICENSE
 -------
 
-This project is GPL v2 software. See the LICENSE.txt file in this directory for
-complete text.
+This project is GPL v2 software. See the LICENSE.txt file in this directory for complete text.
 
-Maintainers
+CREDITS
+-----------
+
+This module is based on the Simplenews Scheduler module for Drupal, originally written and maintained by a large number of contributors, including:
+
+- Leigh Morresi (dgtlmoon) - <http://drupal.org/user/25027>
+- Gabor Seljan (sgabe) - <http://drupal.org/user/232117>
+
+MAINTAINERS
 -----------
 
 - seeking
-
-Current Maintainers on Drupal:
-
-* Leigh Morresi (dgtlmoon) - <http://drupal.org/user/25027>
-* Gabor Seljan (sgabe) - <http://drupal.org/user/232117>
 
 Ported to Backdrop by:
 
