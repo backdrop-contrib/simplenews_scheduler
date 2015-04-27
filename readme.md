@@ -38,6 +38,7 @@ http://drupal.org/project/issues/simplenews_scheduler
 TESTED
 -----
 
+<<<<<<< HEAD
 Email Modules
 The following modules ported to Backdrop are inter-related to the mailing system:
 
@@ -56,6 +57,11 @@ smtp
 They have been converted from Drupal to Backdrop but are still not working.  They need debugging into what was changed between the systems and how to fix it. I, biolithic the one who did the intial conversion, lack the heart or time in the spring of 2015 to debug them currently.
 
 Do you have a need or desire for email newsletters?  You are welcome to submit pull requests to finish these modules.  It may not be a lot of work.  Thanks!
+=======
+@todo
+
+This module is not working in Backdrop yet.  Node and Taxonomy conversions need to be made (among possible other things) before it can be tested.
+>>>>>>> f1408dca6536d0cdba79105c4e8c67bea9741a37
 
 KNOWN ISSUES
 ---------------------
